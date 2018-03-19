@@ -1,0 +1,81 @@
+package nsshconfig
+
+import (
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
+	"log"
+	"os"
+	"os/user"
+	"path/filepath"
+	"regexp"
+	"strings"
+)
+
+func GetPathConfig() string {
+	usr := CurrentUser()
+	return fmt.Sprintf("%s/.ssh/config_test", usr.HomeDir)
+}
+
+func CurrentUser() *user.User {
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+	return usr
+}
+
+func Contains(sub string, options []string, str ...string) bool {
+	sub = strings.ToLower(sub)
+
+	for _, s := range str {
+		s = strings.ToLower(s)
+		if strings.Contains(s, sub) {
+			return true
+		}
+	}
+
+	for _, o := range options {
+		o = strings.ToLower(o)
+		if strings.Contains(o, sub) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func MatchString(rgxp string, compare string) bool {
+	r, err := regexp.Compile(rgxp)
+	if err != nil {
+		fmt.Println("Invalid regexp")
+		os.Exit(1)
+	}
+	return r.MatchString(FormatHostLine(compare))
+}
+
+func FormatHostLine(line string) string {
+	return strings.TrimLeft(strings.ToLower(line), " ")
+}
+
+func Clear() {
+	entries = []*Entry{}
+	return
+}
+
+func (e *Entry) Decode() string {
+
+	config := fmt.Sprintf("Host %s\n", e.Host)
+	for key, value := range e.Options {
+		config += fmt.Sprintf("	%s %s\n", key, value)
+	}
+
+	return config
+}
+
+func TempFileName(prefix, suffix string) string {
+	randBytes := make([]byte, 16)
+	rand.Read(randBytes)
+	return filepath.Join("/tmp", prefix+hex.EncodeToString(randBytes)+suffix)
+}
