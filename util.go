@@ -14,7 +14,7 @@ import (
 
 func GetPathConfig() string {
 	usr := CurrentUser()
-	return fmt.Sprintf("%s/.ssh/config_test", usr.HomeDir)
+	return fmt.Sprintf("%s/.ssh/config", usr.HomeDir)
 }
 
 func CurrentUser() *user.User {
