@@ -68,7 +68,7 @@ func LoadConfig() error {
 
 				if len(lineOption) >= 2 {
 					key = strings.ToLower(lineOption[0])
-					val = strings.ToLower(strings.TrimSpace(lineOption[1]))
+					val = strings.TrimSpace(lineOption[1])
 					aux.Options[key] = val
 				}
 
