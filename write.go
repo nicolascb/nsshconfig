@@ -1,7 +1,6 @@
 package nsshconfig
 
 import (
-	"errors"
 	"os"
 )
 
@@ -22,10 +21,6 @@ func WriteConfig() error {
 
 	for _, x := range Hosts() {
 		config = append(config, x.Decode())
-	}
-
-	if len(config) == 0 {
-		return errors.New("Not entries to write")
 	}
 
 	for _, c := range config {
