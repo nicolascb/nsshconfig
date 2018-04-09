@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/user"
@@ -78,4 +79,27 @@ func TempFileName(prefix, suffix string) string {
 	randBytes := make([]byte, 16)
 	rand.Read(randBytes)
 	return filepath.Join("/tmp", prefix+hex.EncodeToString(randBytes)+suffix)
+}
+
+func Copy(src, dst string) error {
+	in, err := os.Open(src)
+
+	if err != nil {
+		return err
+	}
+
+	defer in.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	if err != nil {
+		return err
+	}
+
+	return out.Close()
 }

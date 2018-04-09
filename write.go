@@ -33,7 +33,7 @@ func WriteConfig() error {
 		return err
 	}
 
-	err = os.Rename(tmpName, *configPath)
+	err = Copy(tmpName, *configPath)
 	if err != nil {
 		return err
 	}
