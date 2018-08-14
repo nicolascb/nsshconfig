@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Save host
 func (e *Entry) Save() error {
 	options := make(map[string]string)
 
@@ -39,6 +40,7 @@ func (e *Entry) Save() error {
 	return nil
 }
 
+// Delete host
 func Delete(host string) error {
 	for idx, x := range entries {
 		if strings.ToLower(x.Host) == strings.ToLower(host) {
@@ -51,6 +53,18 @@ func Delete(host string) error {
 
 }
 
+// ExistHost is a check if exist host
+func ExistHost(host string) bool {
+	for _, h := range entries {
+		if strings.ToLower(h.Host) == strings.ToLower(host) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// New entry
 func New(host string, options map[string]string) error {
 	n := &Entry{}
 	n.Options = make(map[string]string)
@@ -61,6 +75,7 @@ func New(host string, options map[string]string) error {
 	return n.Save()
 }
 
+// GetEntryByHost return entry by host
 func GetEntryByHost(host string) (*Entry, error) {
 	for _, h := range entries {
 		if strings.ToLower(h.Host) == strings.ToLower(host) {
@@ -71,6 +86,7 @@ func GetEntryByHost(host string) (*Entry, error) {
 	return nil, errors.New("Host not found")
 }
 
+// SetConfigPath set config file
 func SetConfigPath(file string) {
 	configPath = &file
 }
