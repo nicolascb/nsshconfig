@@ -8,16 +8,18 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
 )
 
+// GetPathConfig return ~/.ssh/config
 func GetPathConfig() string {
-	usr := CurrentUser()
-	return fmt.Sprintf("%s/.ssh/config", usr.HomeDir)
+	return path.Join(CurrentUser().HomeDir, "/.ssh/config")
 }
 
+// CurrentUser get current user
 func CurrentUser() *user.User {
 	usr, err := user.Current()
 	if err != nil {
@@ -27,44 +29,26 @@ func CurrentUser() *user.User {
 	return usr
 }
 
-func Contains(sub string, options []string, str ...string) bool {
-	sub = strings.ToLower(sub)
-
-	for _, s := range str {
-		s = strings.ToLower(s)
-		if strings.Contains(s, sub) {
-			return true
-		}
-	}
-
-	for _, o := range options {
-		o = strings.ToLower(o)
-		if strings.Contains(o, sub) {
-			return true
-		}
-	}
-
-	return false
-}
-
-func MatchString(rgxp string, compare string) bool {
+func matchStr(rgxp string, compare string) bool {
 	r, err := regexp.Compile(rgxp)
 	if err != nil {
 		fmt.Println("Invalid regexp")
 		os.Exit(1)
 	}
-	return r.MatchString(FormatHostLine(compare))
+	return r.MatchString(formatLine(compare))
 }
 
-func FormatHostLine(line string) string {
+func formatLine(line string) string {
 	return strings.TrimLeft(strings.ToLower(line), " ")
 }
 
+// Clear entries
 func Clear() {
 	entries = []*Entry{}
 	return
 }
 
+// Decode entry
 func (e *Entry) Decode() string {
 
 	config := fmt.Sprintf("Host %s\n", e.Host)
@@ -75,13 +59,13 @@ func (e *Entry) Decode() string {
 	return config
 }
 
-func TempFileName(prefix, suffix string) string {
+func tmpFile(prefix, suffix string) string {
 	randBytes := make([]byte, 16)
 	rand.Read(randBytes)
 	return filepath.Join("/tmp", prefix+hex.EncodeToString(randBytes)+suffix)
 }
 
-func Copy(src, dst string) error {
+func copyFile(src, dst string) error {
 	in, err := os.Open(src)
 
 	if err != nil {

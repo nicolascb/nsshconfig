@@ -4,11 +4,12 @@ import (
 	"os"
 )
 
+// WriteConfig write config
 func WriteConfig() error {
 	var config []string
 	var content string
 
-	tmpName := TempFileName("config_", ".nssh")
+	tmpName := tmpFile("config_", ".nssh")
 
 	// If the file doesn't exist, create it, or append to the file
 	f, err := os.OpenFile(tmpName, os.O_CREATE|os.O_WRONLY, 0600)
@@ -33,7 +34,7 @@ func WriteConfig() error {
 		return err
 	}
 
-	err = Copy(tmpName, *configPath)
+	err = copyFile(tmpName, *configPath)
 	if err != nil {
 		return err
 	}

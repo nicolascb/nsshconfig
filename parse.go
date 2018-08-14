@@ -6,15 +6,18 @@ import (
 	"strings"
 )
 
+// Entry config
 type Entry struct {
 	Host    string
 	Options map[string]string
 }
 
-var configPath *string
+var (
+	configPath *string
+	entries    []*Entry
+)
 
-var entries []*Entry
-
+// LoadConfig read and parse ~/.ssh/config
 func LoadConfig() error {
 	var fl = true
 	var err error
@@ -43,17 +46,17 @@ func LoadConfig() error {
 	// Loop file
 	for scanner.Scan() {
 
-		if MatchString("^host ", scanner.Text()) {
+		if matchStr("^host ", scanner.Text()) {
 			if !fl {
 				entries = append(entries, aux)
 				aux = &Entry{}
 				aux.Options = make(map[string]string)
 			}
 			fl = false
-			host := strings.Replace(FormatHostLine(scanner.Text()), "host", "", -1)
+			host := strings.Replace(formatLine(scanner.Text()), "host", "", -1)
 			aux.Host = strings.TrimSpace(host)
 		} else {
-			if !MatchString("^#", scanner.Text()) {
+			if !matchStr("^#", scanner.Text()) {
 				var lineOption []string
 				key := ""
 				val := ""
@@ -92,10 +95,12 @@ func LoadConfig() error {
 	return nil
 }
 
+// TotalEntries get total entries
 func TotalEntries() int {
 	return len(entries)
 }
 
+// Hosts get hosts
 func Hosts() []*Entry {
 	return entries
 }

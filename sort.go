@@ -6,7 +6,6 @@ import (
 )
 
 // Thanks: https://stackoverflow.com/a/29000710
-
 func Prop(field string, asc bool) func(p1, p2 *Entry) bool {
 	return func(p1, p2 *Entry) bool {
 
