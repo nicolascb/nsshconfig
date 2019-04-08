@@ -2,6 +2,7 @@ package nsshconfig_test
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/nicolascb/nsshconfig"
@@ -142,6 +143,34 @@ func TestGetHost(t *testing.T) {
 
 	if general.Host != "*" {
 		t.Error(errors.New("Invalid general host"))
+		return
+	}
+
+}
+func TestExistHost(t *testing.T) {
+	// nsshconfig.SetConfigPath("/home/nicolas/.ssh/config")
+	// $ cat ~/.ssh/config
+	// Host teste
+	//       hostname teste.com
+	//       user root
+
+	err := nsshconfig.LoadConfig()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Check if exist host
+	if nsshconfig.ExistHost("abcdfeg") {
+		// Host already exist, print error and exit
+		t.Error(fmt.Errorf("incorrect existhost"))
+		return
+	}
+
+	// Check if exist host
+	if !nsshconfig.ExistHost("teste") {
+		// Host already exist, print error and exit
+		t.Error(fmt.Errorf("incorrect existhost - 2"))
 		return
 	}
 
