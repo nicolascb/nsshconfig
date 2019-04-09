@@ -53,7 +53,7 @@ func LoadConfig() error {
 				aux.Options = make(map[string]string)
 			}
 			fl = false
-			host := strings.Replace(formatLine(scanner.Text()), "host", "", -1)
+			host := scanner.Text()[4:len(scanner.Text())]
 			aux.Host = strings.TrimSpace(host)
 		} else {
 			if !matchStr("^#", scanner.Text()) {
